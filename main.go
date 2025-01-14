@@ -1,15 +1,16 @@
 package main
 
 import (
+	"booking-app/common" //importing a package from a different directory references module name
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 const confrenceTickets = 50
 
 var confrenceName = "Go Confrence" // shorthand declaration invalid for package level variables
 var remainingTickets = 50
-var bookings []string //this is a slice, similar to array but with dynamic size
+var bookings = make([]map[string]string, 0) //this is a slice, similar to array but with dynamic size. because we're using map, we need to use make to initialize it
 
 func main() {
 
@@ -17,7 +18,7 @@ func main() {
 
 	for { //infinite loop
 		firstName, lastName, email, userTickets := getUserInput()
-		isValidName, isValidEmail, isValidTickets := validateUserInput(firstName, lastName, email, userTickets)
+		isValidName, isValidEmail, isValidTickets := common.ValidateUserInput(firstName, lastName, email, userTickets, remainingTickets)
 
 		if isValidEmail && isValidName && isValidTickets {
 
@@ -49,8 +50,8 @@ func getFirstNames() []string {
 
 	for _, booking := range bookings {
 		//_ is a throwaway variable (blank identifier)
-		var names = strings.Fields(booking) //creates an array of strings from the booking string
-		firstNames = append(firstNames, names[0])
+		//booking variable is a map
+		firstNames = append(firstNames, booking["firstName"])
 	}
 
 	return firstNames
@@ -79,7 +80,15 @@ func getUserInput() (string, string, string, int) {
 
 func bookTicket(userTickets int, firstName string, lastName string, email string) {
 	remainingTickets = remainingTickets - userTickets
-	bookings = append(bookings, firstName+" "+lastName) //append to the slice. have to assign back to variable
+
+	var userData = make(map[string]string) //you cannot mix types in a map (similar to slice) so we need to cast
+	userData["firstName"] = firstName
+	userData["lastName"] = lastName
+	userData["email"] = email
+	userData["numberOfTickets"] = strconv.FormatInt(int64(userTickets), 10)
+
+	bookings = append(bookings, userData) //append to the slice. have to assign back to variable
+	fmt.Printf("List of bookings: %v\n", bookings)
 
 	fmt.Printf("Thank you %s %s for booking %d tickets for %s, we will email you at %s\n", firstName, lastName, userTickets, confrenceName, email)
 	fmt.Printf("We have %d tickets remaining out of a total of %d\n", remainingTickets, confrenceTickets)
