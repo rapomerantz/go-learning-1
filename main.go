@@ -77,14 +77,6 @@ func getUserInput() (string, string, string, int) {
 	return firstName, lastName, email, userTickets
 }
 
-func validateUserInput(firstName string, lastName string, email string, userTickets int) (bool, bool, bool) {
-	isValidName := len(lastName) >= 2 && len(firstName) >= 2
-	isValidEmail := strings.Contains(email, "@")
-	isValidTickets := userTickets > 0 && userTickets <= remainingTickets
-
-	return isValidName, isValidEmail, isValidTickets //go can return multiple values
-}
-
 func bookTicket(userTickets int, firstName string, lastName string, email string) {
 	remainingTickets = remainingTickets - userTickets
 	bookings = append(bookings, firstName+" "+lastName) //append to the slice. have to assign back to variable
