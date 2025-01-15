@@ -3,14 +3,24 @@ package main
 import (
 	"booking-app/common" //importing a package from a different directory references module name
 	"fmt"
-	"strconv"
 )
 
 const confrenceTickets = 50
 
 var confrenceName = "Go Confrence" // shorthand declaration invalid for package level variables
 var remainingTickets = 50
-var bookings = make([]map[string]string, 0) //this is a slice, similar to array but with dynamic size. because we're using map, we need to use make to initialize it
+
+// var bookings = make([]map[string]string, 0) //this is a slice, similar to array but with dynamic size. because we're using map, we need to use make to initialize it
+var bookings = make([]UserData, 0) //replacing with a slices of struct
+
+// struct allows mixed types, a lightweight class
+// type keyword creates a custom type in the app
+type UserData struct {
+	firstName string
+	lastName  string
+	email     string
+	tickets   int
+}
 
 func main() {
 
@@ -51,7 +61,7 @@ func getFirstNames() []string {
 	for _, booking := range bookings {
 		//_ is a throwaway variable (blank identifier)
 		//booking variable is a map
-		firstNames = append(firstNames, booking["firstName"])
+		firstNames = append(firstNames, booking.firstName)
 	}
 
 	return firstNames
@@ -81,11 +91,12 @@ func getUserInput() (string, string, string, int) {
 func bookTicket(userTickets int, firstName string, lastName string, email string) {
 	remainingTickets = remainingTickets - userTickets
 
-	var userData = make(map[string]string) //you cannot mix types in a map (similar to slice) so we need to cast
-	userData["firstName"] = firstName
-	userData["lastName"] = lastName
-	userData["email"] = email
-	userData["numberOfTickets"] = strconv.FormatInt(int64(userTickets), 10)
+	var userData = UserData{
+		firstName,
+		lastName,
+		email,
+		userTickets,
+	} //creating a struct
 
 	bookings = append(bookings, userData) //append to the slice. have to assign back to variable
 	fmt.Printf("List of bookings: %v\n", bookings)
