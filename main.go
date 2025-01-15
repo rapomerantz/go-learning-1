@@ -3,6 +3,7 @@ package main
 import (
 	"booking-app/common" //importing a package from a different directory references module name
 	"fmt"
+	"time"
 )
 
 const confrenceTickets = 50
@@ -33,6 +34,7 @@ func main() {
 		if isValidEmail && isValidName && isValidTickets {
 
 			bookTicket(userTickets, firstName, lastName, email)
+			go sendTicket(userTickets, firstName, email) // go keyword abstracts away conconcurent threading
 
 			firstNames := getFirstNames()
 
@@ -103,4 +105,12 @@ func bookTicket(userTickets int, firstName string, lastName string, email string
 
 	fmt.Printf("Thank you %s %s for booking %d tickets for %s, we will email you at %s\n", firstName, lastName, userTickets, confrenceName, email)
 	fmt.Printf("We have %d tickets remaining out of a total of %d\n", remainingTickets, confrenceTickets)
+}
+
+func sendTicket(userTickets int, firstName string, email string) {
+	time.Sleep(10 * time.Second)
+	var ticket = fmt.Sprintf("%v tickets to %v user via email %v\n", userTickets, firstName, email) //sprintf formats and returns a string
+	fmt.Println("#####")
+	fmt.Printf("sending ticket: \n%v to email address %v\n", ticket, email)
+	fmt.Println("#####")
 }
