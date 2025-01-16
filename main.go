@@ -3,6 +3,7 @@ package main
 import (
 	"booking-app/common" //importing a package from a different directory references module name
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -23,6 +24,8 @@ type UserData struct {
 	tickets   int
 }
 
+var wg = sync.WaitGroup{}
+
 func main() {
 
 	greetUsers()
@@ -34,7 +37,9 @@ func main() {
 		if isValidEmail && isValidName && isValidTickets {
 
 			bookTicket(userTickets, firstName, lastName, email)
-			go sendTicket(userTickets, firstName, email) // go keyword abstracts away conconcurent threading
+
+			wg.Add(1)
+			go sendTicket(userTickets, firstName, email) // go keyword abstracts away conconcurent threading. main thread doesn't wait for this to complete however
 
 			firstNames := getFirstNames()
 
@@ -49,6 +54,7 @@ func main() {
 			fmt.Println("invalid input")
 		}
 	}
+	wg.Wait() //required to wait for all go routines to finish
 }
 
 func greetUsers() {
@@ -113,4 +119,6 @@ func sendTicket(userTickets int, firstName string, email string) {
 	fmt.Println("#####")
 	fmt.Printf("sending ticket: \n%v to email address %v\n", ticket, email)
 	fmt.Println("#####")
+
+	wg.Done() //removes thread from wait group
 }
